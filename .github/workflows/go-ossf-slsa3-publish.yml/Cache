@@ -1,0 +1,58 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+# This workflow lets you compile your Go project using a SLSA3 compliant builder.
+# This workflow will generate a so-called "provenance" file describing the steps
+# that were performed to generate the final binary.
+# The project is an initiative of the OpenSSF (openssf.org) and is developed at
+# https://github.com/slsa-framework/slsa-github-generator.
+# The provenance file can be verified using https://github.com/slsa-framework/slsa-verifier.
+# For more information about SLSA and how it improves the supply-chain, visit slsa.dev.
+
+name: SLSA Go releaser
+on:
+  workflow_dispatch:
+  release:
+    types: [created]
+
+permissions: read-all
+
+jobs:
+  # ========================================================================================================================================
+  #     Prerequesite: Create a .slsa-goreleaser.yml in the root directory of your project.
+  #       See format in https://github.com/slsa-framework/slsa-github-generator/blob/main/internal/builders/go/README.md#configuration-file
+  #=========================================================================================================================================
+  build:
+    permissions:
+      id-token: write # To sign.
+      contents: write # To upload release assets.
+      actions: read   # To read workflow path.
+    uses: slsa-framework/slsa-github-generator/.github/workflows/builder_go_slsa3.yml@v1.4.0
+    with:
+      go-version: 1.17
+      # =============================================================================================================
+      #     Optional: For more options, see https://github.com/slsa-framework/slsa-github-generator#golang-projects
+      # =============================================================================================================
+
+            - name: Cache
+  uses: actions/cache@v4.0.0
+  with:
+    # A list of files, directories, and wildcard patterns to cache and restore
+    path: 
+    # An explicit key for restoring and saving the cache
+    key: 
+    # An ordered list of keys to use for restoring stale cache if no cache hit occurred for key. Note `cache-hit` returns false in this case.
+    restore-keys: # optional
+    # The chunk size used to split up large files during upload, in bytes
+    upload-chunk-size: # optional
+    # An optional boolean when enabled, allows windows runners to save or restore caches that can be restored or saved respectively on other platforms
+    enableCrossOsArchive: # optional, default is false
+    # Fail the workflow if cache entry is not found
+    fail-on-cache-miss: # optional, default is false
+    # Check if a cache entry exists for the given input(s) (key, restore-keys) without downloading the cache
+    lookup-only: # optional, default is false
+    # Run the post step to save the cache even if another step before fails
+    save-always: # optional, default is false
+          
